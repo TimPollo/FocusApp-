@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#0b0b0c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="FocusFrame">
+  <meta name="description" content="Private Fokus-Kamera mit speichersparendem Zeitraffer, Gym-Videos und Fokus-Statistik.">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" href="icon-192.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <link rel="stylesheet" href="styles.css">
+  <title>FocusFrame – Make your time count.</title>
+</head>
+<body>
+  <div id="app">
+    <header class="topbar">
+      <div class="brand"><span class="brand-symbol">F<span>·</span></span><span class="brand-name">FOCUSFRAME<small>Dein Fortschritt. Sichtbar.</small></span></div>
+      <span class="privacy"><span class="privacy-dot"></span> PRIVAT & LOKAL</span>
+    </header>
+
+    <main>
+      <section class="view active" id="view-camera" aria-label="Aufnahme">
+        <div class="intro"><p class="eyebrow">BUILD YOUR EVIDENCE</p><h1>Zeig dir, was<br><em>in dir steckt.</em></h1><p class="intro-text">Ob Lernen, Arbeit oder Training: Halte deine Zeit fest, ohne stundenlange Videos speichern zu müssen.</p></div>
+
+        <div class="studio-card">
+          <div class="studio-top"><div><span class="tiny-label">DEIN STUDIO</span><h2>Focus Camera</h2></div><span class="state-pill" id="recordState"><span class="state-dot"></span> Bereit</span></div>
+          <div class="camera-stage" id="cameraStage">
+            <div class="camera-idle" id="cameraIdle"><div class="viewfinder-icon"><span>◎</span></div><h3>Dein Moment zählt.</h3><p>Kamera startet erst nach deiner Freigabe.</p></div>
+            <video id="livePreview" class="live-preview" autoplay muted playsinline webkit-playsinline></video>
+            <div class="stage-vignette"></div>
+            <span class="preview-badge" id="previewBadge" hidden><i></i> REC</span>
+            <button type="button" class="camera-flip" id="flipCamera" aria-label="Kamera wechseln" title="Kamera wechseln">↻ <span>Kamera</span></button>
+            <div class="stage-footer"><div><span class="tiny-label" id="stageTitle">BEREIT ZUM START</span><div id="timerDisplay" class="timer-display">00:00:00</div></div><div class="stage-mode" id="stageMode">ZEITRAFFER</div></div>
+          </div>
+          <div class="studio-body">
+            <div class="mode-switch" aria-label="Aufnahmemodus">
+              <button class="mode-btn active" data-mode="timelapse" type="button">◴ Zeitraffer</button>
+              <button class="mode-btn" data-mode="video" type="button">◉ Gym-Video</button>
+              <button class="mode-btn" data-mode="timer" type="button">◷ Nur Timer</button>
+            </div>
+            <div class="field-grid">
+              <label class="field"><span>WAS MACHST DU?</span><input id="sessionTitle" type="text" maxlength="60" placeholder="z. B. Push Day / Mathe lernen" value="Fokus-Session" autocomplete="off"></label>
+              <label class="field"><span>KATEGORIE</span><select id="sessionCategory"><option value="Lernen">📚 Lernen</option><option value="Arbeiten">💻 Arbeiten</option><option value="Training">🏋️ Training</option><option value="Projekte">✍️ Projekte</option><option value="Sonstiges">✨ Sonstiges</option></select></label>
+            </div>
+            <div class="field-grid secondary-fields"><label class="field"><span>ZEITZIEL (MINUTEN)</span><input id="goalMinutes" type="number" min="0" max="480" step="5" value="0" inputmode="numeric" aria-describedby="goalHelp"></label><div class="field field-toggle"><span>POMODORO 25/5</span><label class="switch"><input id="pomodoroEnabled" type="checkbox"><span class="switch-track"></span></label></div></div>
+            <p class="helper" id="goalHelp">0 = ohne Zeitlimit. Pomodoro erinnert dich alle 25 Minuten an eine Pause.</p>
+            <button id="startStop" class="primary-button" type="button"><span id="startIcon" class="start-icon">●</span> <span id="startLabel">Fokus starten</span><span class="button-arrow">↗</span></button>
+            <div class="quick-actions"><button type="button" id="dimButton" class="quiet-button" disabled>☾ Display abdunkeln</button><button type="button" id="keepAwakeButton" class="quiet-button" disabled>☀ Wachhalten: an</button></div>
+            <p id="modeExplanation" class="small-note">Zeitraffer: einzelne komprimierte Bilder statt einer stundenlangen Rohvideo-Datei. Am Ende entsteht ein Clip von ungefähr 30 Sekunden mit eingeblendetem Timer.</p>
+          </div>
+        </div>
+        <div class="feature-row"><div class="feature"><span class="feature-icon">↘</span><b>Wenig Speicher</b><p>Intelligent ausgedünnte Zeitraffer-Bilder.</p></div><div class="feature"><span class="feature-icon">◈</span><b>Ohne Cloud</b><p>Deine Aufnahmen bleiben im Browser.</p></div></div>
+      </section>
+
+      <section class="view" id="view-library" aria-label="Aufnahmen">
+        <div class="section-heading"><p class="eyebrow">YOUR WORK, YOUR PROOF</p><h1>Deine <em>Sessions.</em></h1><p>Alles bleibt lokal. Du kannst Clips ansehen, exportieren oder vollständig löschen.</p></div>
+        <div id="libraryList" class="library-list"><div class="empty-state">Noch keine Sessions gespeichert.</div></div>
+      </section>
+
+      <section class="view" id="view-stats" aria-label="Statistik">
+        <div class="section-heading"><p class="eyebrow">EVERY HOUR COUNTS</p><h1>Deine <em>Bilanz.</em></h1><p>Nur Sessions, die du beendet und gespeichert hast, fließen in deine Statistik ein.</p></div>
+        <div class="stats-grid"><div class="stat-card"><span>GESAMTZEIT</span><strong id="statHours">0h 0m</strong><small>investierte Zeit</small></div><div class="stat-card"><span>SESSIONS</span><strong id="statSessions">0</strong><small>abgeschlossen</small></div><div class="stat-card"><span>STREAK</span><strong id="statStreak">0 Tage</strong><small>aktuelle Serie</small></div><div class="stat-card"><span>DURCHSCHNITT</span><strong id="statAverage">0m</strong><small>pro Session</small></div></div>
+        <div class="panel"><div class="panel-heading"><h3>Letzte 7 Tage</h3><span>Minuten / Tag</span></div><div id="weekBars" class="week-bars"></div></div>
+        <div class="panel"><div class="panel-heading"><h3>Aktivitätskalender</h3><span id="calendarMonth"></span></div><div class="week-labels"><span>Mo</span><span>Di</span><span>Mi</span><span>Do</span><span>Fr</span><span>Sa</span><span>So</span></div><div id="monthHeatmap" class="heatmap"></div><div class="legend">Weniger <span class="legend-squares">◼ ◼ ◼ ◼</span> Mehr</div></div>
+      </section>
+
+      <section class="view" id="view-settings" aria-label="Einstellungen">
+        <div class="section-heading"><p class="eyebrow">CONTROL THE DETAILS</p><h1>Deine <em>Einstellungen.</em></h1></div>
+        <div class="panel settings-panel"><h3>Aufnahmen</h3><label class="setting-row"><span><b>Automatisch abdunkeln</b><small>Nach 15 Sekunden Aufnahme auf fast schwarzen App-Bildschirm wechseln</small></span><span class="switch"><input id="autoDimSetting" type="checkbox" checked><span class="switch-track"></span></span></label><label class="setting-row"><span><b>Mikrofon bei Gym-Videos</b><small>Standardmäßig deaktiviert</small></span><span class="switch"><input id="useMicrophone" type="checkbox"><span class="switch-track"></span></span></label><label class="setting-row"><span><b>Bildschirm wachhalten</b><small>Versucht während der Aufnahme das Sperren zu verhindern</small></span><span class="switch"><input id="keepAwakeSetting" type="checkbox" checked><span class="switch-track"></span></span></label><label class="setting-row"><span><b>Clips automatisch löschen</b><small>Wirkt auf abgeschlossene Sessions in diesem Browser</small></span><select id="autoDelete"><option value="0">Nie</option><option value="7">Nach 7 Tagen</option><option value="30">Nach 30 Tagen</option><option value="90">Nach 90 Tagen</option></select></label><label class="setting-row"><span><b>Lokaler Speicher</b><small>Schätzung des von dieser Website belegten Speichers</small></span><strong id="storageUsed">–</strong></label></div>
+        <div class="panel tip-panel"><h3>Gut zu wissen</h3><p>Der Dunkelbildschirm senkt nur die angezeigte Helligkeit innerhalb dieser Web-App. Die iPhone-Systemhelligkeit kann eine Website nicht ändern. Die Kamera muss im Vordergrund bleiben; bei gesperrtem Bildschirm oder beim App-Wechsel kann die Aufnahme stoppen.</p><p>Speichere wichtige Clips über „Teilen / Speichern“ außerhalb der App. Das Löschen von Browserdaten oder der Web-App kann deine lokalen Aufnahmen entfernen.</p></div>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Hauptnavigation"><button class="nav-btn selected" data-tab="camera" type="button"><span>◉</span><small>Kamera</small></button><button class="nav-btn" data-tab="library" type="button"><span>▦</span><small>Sessions</small></button><button class="nav-btn" data-tab="stats" type="button"><span>▥</span><small>Statistik</small></button><button class="nav-btn" data-tab="settings" type="button"><span>⚙</span><small>Optionen</small></button></nav>
+    <footer>FOCUSFRAME <span>•</span> BUILDING REAL CONSISTENCY</footer>
+  </div>
+
+  <div id="dimScreen" class="dim-screen" aria-hidden="true"><div class="dim-central"><span class="dim-red">● LIVE</span><div id="dimTime" class="dim-timer">00:00:00</div><div id="dimFocus" class="dim-caption">FOKUS LÄUFT</div><p>Bildschirm dunkel · Kamera läuft</p></div><div class="dim-bottom"><button type="button" id="dimRestore">☀ Aufhellen</button><button type="button" id="dimStop">■ Beenden</button></div></div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <dialog id="videoDialog" class="video-dialog"><div class="dialog-top"><strong id="dialogTitle">Deine Session</strong><button id="closeDialog" aria-label="Schließen" type="button">✕</button></div><video id="savedVideo" playsinline controls></video><img id="savedImage" alt="Gespeicherte Bildübersicht" hidden><p id="dialogInfo"></p><button class="primary-button" id="shareVideo" type="button">↓ Teilen / Speichern</button></dialog>
+  <script src="app.js" defer></script>
+</body>
+</html>
